@@ -1,110 +1,148 @@
-// Sidebar.tsx — Left navigation panel showing the workflow steps.
+// Sidebar.tsx — Responsive navigation panel supporting desktop layout & mobile slide-over drawer.
 
-import { Satellite, FlaskConical, ChevronRight } from 'lucide-react';
+import { Satellite, FlaskConical, ChevronRight, X } from 'lucide-react';
 import { useExperimentStore } from '../store/experimentStore';
 import { WORKFLOW_STEPS } from '../types';
 
-interface Props { open: boolean }
+interface Props {
+  desktopOpen: boolean;
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
 
-export function Sidebar({ open }: Props) {
+export function Sidebar({ desktopOpen, mobileOpen, onMobileClose }: Props) {
   const { currentStep, setStep, experiment } = useExperimentStore();
 
-  if (!open) return null;
+  const handleStepClick = (stepId: number, isAccessible: boolean) => {
+    if (isAccessible) {
+      setStep(stepId);
+      onMobileClose();
+    }
+  };
 
-  return (
-    <aside
-      className="flex flex-col w-64 shrink-0 border-r"
-      style={{
-        background: '#FFFFFF',
-        borderColor: '#E5EAF2',
-        boxShadow: '1px 0 4px 0 rgb(0 0 0 / 0.04)',
-      }}
-    >
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b" style={{ borderColor: '#E5EAF2' }}>
-        <div
-          className="flex items-center justify-center w-9 h-9 rounded-xl"
-          style={{ background: '#3978E8' }}
+  const navContent = (
+    <div className="flex flex-col h-full bg-white">
+      {/* Logo and Header */}
+      <div className="flex items-center justify-between px-5 py-4.5 border-b border-[#E5EAF2]">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3978E8] shadow-xs">
+            <Satellite size={18} color="#fff" strokeWidth={2} />
+          </div>
+          <div>
+            <p className="text-sm font-bold tracking-tight text-[#172B4D]">
+              ORBITAL
+            </p>
+            <p className="text-[11px] text-[#718096]">
+              HAI · SIH26174
+            </p>
+          </div>
+        </div>
+
+        {/* Mobile close button */}
+        <button
+          onClick={onMobileClose}
+          className="lg:hidden p-1.5 rounded-lg text-[#718096] hover:bg-[#F7F9FC] transition-colors"
+          title="Close menu"
         >
-          <Satellite size={18} color="#fff" strokeWidth={2} />
-        </div>
-        <div>
-          <p className="text-sm font-bold tracking-tight" style={{ color: '#172B4D' }}>
-            ORBITAL
-          </p>
-          <p className="text-xs" style={{ color: '#718096' }}>
-            HAI · SIH26174
-          </p>
-        </div>
+          <X size={18} />
+        </button>
       </div>
 
-      {/* Workflow steps */}
-      <nav className="flex-1 px-4 py-6 space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-widest px-2 mb-3" style={{ color: '#718096' }}>
-          Workflow
+      {/* Workflow Steps List */}
+      <nav className="flex-1 px-3.5 py-5 space-y-1 overflow-y-auto">
+        <p className="text-[11px] font-bold uppercase tracking-wider px-2.5 mb-2.5 text-[#718096]">
+          Mission Sequence
         </p>
 
         {WORKFLOW_STEPS.map((step) => {
-          const isActive    = currentStep === step.id;
+          const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
           const isAccessible = step.id <= currentStep + 1 || isCompleted;
 
           return (
             <button
               key={step.id}
-              onClick={() => isAccessible && setStep(step.id)}
+              onClick={() => handleStepClick(step.id, isAccessible)}
               disabled={!isAccessible}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all"
-              style={{
-                background:  isActive ? '#EFF4FD' : 'transparent',
-                color:       isActive ? '#3978E8' : isCompleted ? '#172B4D' : '#718096',
-                cursor:      isAccessible ? 'pointer' : 'not-allowed',
-                opacity:     isAccessible ? 1 : 0.5,
-              }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all ${
+                isActive
+                  ? 'bg-[#EFF4FD] text-[#3978E8] font-semibold'
+                  : isCompleted
+                  ? 'text-[#172B4D] hover:bg-[#F7F9FC]'
+                  : 'text-[#94A3B8] opacity-60 cursor-not-allowed'
+              }`}
             >
               {/* Step indicator */}
               <div
-                className="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0"
-                style={{
-                  background: isActive ? '#3978E8' : isCompleted ? '#22C55E' : '#E5EAF2',
-                  color:      isActive || isCompleted ? '#fff' : '#718096',
-                }}
+                className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0 transition-all ${
+                  isActive
+                    ? 'bg-[#3978E8] text-white shadow-xs'
+                    : isCompleted
+                    ? 'bg-[#22C55E] text-white'
+                    : 'bg-[#E5EAF2] text-[#718096]'
+                }`}
               >
                 {isCompleted ? '✓' : step.id}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium truncate">{step.label}</p>
+                <p className="text-xs truncate">{step.label}</p>
+                <p className="text-[10px] text-[#718096] truncate">Step 0{step.id}</p>
               </div>
 
-              {isActive && <ChevronRight size={14} style={{ color: '#3978E8' }} />}
+              {isActive && <ChevronRight size={14} className="text-[#3978E8] shrink-0" />}
             </button>
           );
         })}
       </nav>
 
-      {/* Experiment badge */}
+      {/* Active Experiment Metadata Badge */}
       {experiment && (
-        <div className="px-4 pb-5">
-          <div
-            className="rounded-xl p-3 border"
-            style={{ background: '#F7F9FC', borderColor: '#E5EAF2' }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <FlaskConical size={12} style={{ color: '#3978E8' }} />
-              <span className="text-xs font-semibold" style={{ color: '#3978E8' }}>
-                Active Experiment
-              </span>
+        <div className="p-3.5 border-t border-[#E5EAF2] bg-[#FAFBFD]">
+          <div className="rounded-xl p-3 border border-[#E5EAF2] bg-white shadow-xs">
+            <div className="flex items-center gap-1.5 mb-1 text-xs font-bold text-[#3978E8]">
+              <FlaskConical size={13} />
+              <span>Active Session</span>
             </div>
-            <p className="text-xs font-medium truncate" style={{ color: '#172B4D' }}>
+            <p className="text-xs font-semibold truncate text-[#172B4D]">
               {experiment.name}
             </p>
-            <p className="text-xs capitalize mt-0.5" style={{ color: '#718096' }}>
-              {experiment.status}
-            </p>
+            <div className="flex items-center justify-between text-[10px] text-[#718096] mt-1">
+              <span className="font-mono truncate">{experiment.id.slice(0, 12)}...</span>
+              <span className="capitalize px-1.5 py-0.5 rounded bg-blue-50 text-[#3978E8] font-medium">
+                {experiment.status}
+              </span>
+            </div>
           </div>
         </div>
       )}
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Static Sidebar (Visible on large screens when desktopOpen is true) */}
+      {desktopOpen && (
+        <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-[#E5EAF2] bg-white shadow-xs z-10">
+          {navContent}
+        </aside>
+      )}
+
+      {/* Mobile Slide-Over Drawer (Backdrop + Slide-in Panel) */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div
+            onClick={onMobileClose}
+            className="fixed inset-0 bg-slate-900/35 backdrop-blur-xs transition-opacity"
+          />
+
+          {/* Drawer container */}
+          <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+            {navContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

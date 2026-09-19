@@ -273,10 +273,10 @@ export function VoiceAssistant() {
       {!voiceOpen && (
         <button
           onClick={() => setVoiceOpen(true)}
-          className="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 rounded-full bg-[#3978E8] text-white shadow-xl hover:bg-[#2563cc] hover:scale-105 active:scale-95 transition-all z-40 border-2 border-white"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#3978E8] text-white shadow-xl hover:bg-[#2563cc] hover:scale-105 active:scale-95 transition-all z-40 border-2 border-white"
           title="Open ORBITAL Voice"
         >
-          <Mic size={24} />
+          <Mic size={22} className="sm:w-6 sm:h-6" />
           {isListening && (
             <span className="absolute -top-1 -right-1 flex h-4 w-4">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -288,7 +288,7 @@ export function VoiceAssistant() {
 
       {/* Assistant Modal Window */}
       {voiceOpen && (
-        <div className="fixed bottom-6 right-6 w-96 max-w-[calc(100vw-2rem)] h-[520px] bg-white rounded-2xl shadow-2xl border border-[#E5EAF2] flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 w-[calc(100vw-1.5rem)] sm:w-96 max-w-sm h-[480px] sm:h-[520px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-[#E5EAF2] flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-[#F7F9FC] border-b border-[#E5EAF2]">
             <div className="flex items-center gap-2.5">

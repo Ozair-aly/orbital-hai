@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: orbital-api
+    env: python
+    buildCommand: pip install -r backend/requirements.txt && python ml/generate_demo_data.py && python ml/train_pipeline.py
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: ./backend
+      - key: ORBITAL_ENV
+        value: production
+      - key: ORBITAL_MODEL_PATH
+        value: ./models/activity_pipeline.pkl
+      - key: ORBITAL_CORS_ORIGINS
+        value: "*"

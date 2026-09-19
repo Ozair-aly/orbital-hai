@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: orbital-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ORBITAL_ENV=production
+      - ORBITAL_MODEL_PATH=/models/activity_pipeline.pkl
+      - ORBITAL_CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:80,http://localhost
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    container_name: orbital-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

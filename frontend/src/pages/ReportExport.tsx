@@ -84,7 +84,7 @@ export function ReportExport() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <button
             onClick={handleStartNew}
             className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-[#E5EAF2] hover:bg-[#F7F9FC] text-[#718096] transition-colors"

@@ -199,21 +199,21 @@ const ExperimentSetup: React.FC = () => {
   // ── Form ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
+    <div className="max-w-2xl mx-auto py-3 sm:py-8 px-1 sm:px-4">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-[#3978E8] bg-opacity-10">
-          <FlaskConical className="w-6 h-6 text-[#3978E8]" />
+      <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#3978E8] bg-opacity-10 shrink-0">
+          <FlaskConical className="w-5 h-5 sm:w-6 sm:h-6 text-[#3978E8]" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#172B4D]">Experiment Setup</h1>
-          <p className="text-sm text-[#718096]">Configure your activity recognition experiment</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#172B4D]">Experiment Setup</h1>
+          <p className="text-xs sm:text-sm text-[#718096]">Configure your activity recognition experiment</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 sm:gap-6">
         {/* Experiment Name */}
-        <div className="bg-white rounded-xl shadow-sm border border-[#E5EAF2] p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-[#E5EAF2] p-4 sm:p-6">
           <label className="flex items-center gap-2 text-sm font-semibold text-[#172B4D] mb-2">
             <FlaskConical className="w-4 h-4 text-[#3978E8]" />
             Experiment Name
