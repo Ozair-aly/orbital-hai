@@ -10,10 +10,12 @@ import {
   ArrowRight,
   Sparkles,
   Layers,
+  Camera,
 } from 'lucide-react';
 import { useExperimentStore } from '../store/experimentStore';
 import { generateBatch } from '../utils/simulationEngine';
 import { SensorChart } from '../components/SensorChart';
+import { WebcamTracker } from '../components/WebcamTracker';
 import { uploadCSV } from '../services/api';
 import type { SensorReading } from '../types';
 
@@ -30,9 +32,10 @@ export function DataCollection() {
     uploadWarnings,
   } = useExperimentStore();
 
-  const [activeTab, setActiveTab] = useState<'stream' | 'upload'>(
+  const [activeTab, setActiveTab] = useState<'stream' | 'webcam' | 'upload'>(
     experiment?.data_source === 'uploaded' ? 'upload' : 'stream'
   );
+  const [webcamStreaming, setWebcamStreaming] = useState<boolean>(false);
   const [sampleCounter, setSampleCounter] = useState<number>(readings.length);
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -178,28 +181,39 @@ export function DataCollection() {
               Data Ingestion Mode
             </h2>
 
-            <div className="flex rounded-lg bg-[#F7F9FC] p-1 border border-[#E5EAF2] mb-4">
+            <div className="flex rounded-lg bg-[#F7F9FC] p-1 border border-[#E5EAF2] mb-4 gap-1">
               <button
                 onClick={() => setActiveTab('stream')}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-1.5 px-2 text-[11px] sm:text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
                   activeTab === 'stream'
                     ? 'bg-white text-[#3978E8] shadow-xs'
                     : 'text-[#718096] hover:text-[#172B4D]'
                 }`}
               >
-                <Radio size={14} />
-                Live Sensor Simulation
+                <Radio size={13} />
+                <span className="truncate">Simulation</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('webcam')}
+                className={`flex-1 py-1.5 px-2 text-[11px] sm:text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
+                  activeTab === 'webcam'
+                    ? 'bg-white text-[#3978E8] shadow-xs'
+                    : 'text-[#718096] hover:text-[#172B4D]'
+                }`}
+              >
+                <Camera size={13} />
+                <span className="truncate">Webcam</span>
               </button>
               <button
                 onClick={() => setActiveTab('upload')}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-1.5 px-2 text-[11px] sm:text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
                   activeTab === 'upload'
                     ? 'bg-white text-[#3978E8] shadow-xs'
                     : 'text-[#718096] hover:text-[#172B4D]'
                 }`}
               >
-                <Upload size={14} />
-                Upload CSV
+                <Upload size={13} />
+                <span className="truncate">CSV</span>
               </button>
             </div>
 
@@ -335,6 +349,17 @@ export function DataCollection() {
                   </div>
                 )}
               </div>
+            )}
+
+            {/* Live Webcam Optical Ingestion Controls */}
+            {activeTab === 'webcam' && (
+              <WebcamTracker
+                onReadingBatch={(batch) => addReadings(batch)}
+                isStreaming={webcamStreaming}
+                onToggleStreaming={setWebcamStreaming}
+                onClear={handleResetSim}
+                readingCount={readings.length}
+              />
             )}
           </div>
 

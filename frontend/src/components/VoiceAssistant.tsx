@@ -184,6 +184,9 @@ export function VoiceAssistant() {
       } else {
         addAssistantMessage('You are already at the first step: Experiment Setup.');
       }
+    } else if (cleaned.includes('webcam') || cleaned.includes('camera')) {
+      setStep(2);
+      addAssistantMessage('Navigating to Data Collection. Enable your webcam to stream real-time optical motion telemetry.');
     }
     // 2. Experiment & Simulation Controls
     else if (cleaned.includes('start simulation') || cleaned.includes('start stream') || cleaned.includes('resume simulation')) {
